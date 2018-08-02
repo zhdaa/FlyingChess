@@ -14,9 +14,38 @@ namespace FlyingChess
         //声明一个静态数组来存储玩家A跟玩家B的坐标
         static int[] PlayerPos = new int[2];
 
+        //存储两个玩家的姓名
+        static string[] PlayerNames = new string[2];
+
         static void Main(string[] args)
         {
             GameShow();
+
+            #region 输入玩家姓名
+            Console.WriteLine("请输入玩家A的姓名");
+            PlayerNames[0] = Console.ReadLine();
+            while (PlayerNames[0] == "")
+            {
+                Console.WriteLine("玩家A的姓名不能为空，请重新输入");
+                PlayerNames[0] = Console.ReadLine();
+            }
+            Console.WriteLine("请输入玩家B的姓名");
+            PlayerNames[1] = Console.ReadLine();
+            while (PlayerNames[1] == "" || PlayerNames[1] == PlayerNames[0])
+            {
+                if (PlayerNames[1] == "")
+                {
+                    Console.WriteLine("玩家B的姓名不能为空，请重新输入");
+                    PlayerNames[1] = Console.ReadLine();
+                }
+                else
+                {
+                    Console.WriteLine("玩家B的姓名不能与玩家A相同，请重新输入");
+                    PlayerNames[1] = Console.ReadLine();
+                }
+            }
+            #endregion
+
             InitialMap();
             DrawMap();
             Console.ReadKey();
