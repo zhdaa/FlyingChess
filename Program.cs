@@ -20,7 +20,6 @@ namespace FlyingChess
         static void Main(string[] args)
         {
             GameShow();
-
             #region 输入玩家姓名
             Console.WriteLine("请输入玩家A的姓名");
             PlayerNames[0] = Console.ReadLine();
@@ -45,9 +44,96 @@ namespace FlyingChess
                 }
             }
             #endregion
-
+            //玩家姓名输入OK之后，首先要清屏
+            Console.Clear();//清屏
+            GameShow();
+            Console.WriteLine("{0}的士兵用A表示", PlayerNames[0]);
+            Console.WriteLine("{0}的士兵用B表示", PlayerNames[1]);
+            //在画地图之前，首先应该初始化地图
             InitialMap();
             DrawMap();
+
+            //当玩家A跟玩家B没有一个人在终点的时候，两个玩家不停的去玩游戏
+            while (PlayerPos[0] < 99 && PlayerPos[1] < 99)
+            {
+                Console.WriteLine("{0}按任意键开始掷骰子", PlayerNames[0]);
+                Console.ReadKey(true);
+                Console.WriteLine("{0}掷出了4", PlayerNames[0]);
+                PlayerPos[0] += 4;
+                Console.ReadKey(true);
+                Console.WriteLine("{0}按任意键开始行动", PlayerNames[0]);
+                Console.ReadKey(true);
+                Console.WriteLine("{0}行动完了", PlayerNames[0]);
+                Console.ReadKey(true);
+                //玩家A有可能踩到了玩家B 方块 幸运轮盘 地雷 暂停 时空隧道
+                if (PlayerPos[0] == PlayerPos[1])
+                {
+                    Console.WriteLine("玩家{0}猜到了玩家{1}，玩家{2}退6格", PlayerNames[0], PlayerNames[1], PlayerNames[1]);
+                    PlayerPos[1] -= 6;
+                    Console.ReadKey(true);
+                }
+                else//踩到了关卡
+                {
+                    //玩家的坐标
+                    switch (Maps[PlayerPos[0]])//0 1 2 3 4
+                    {
+                        case 0:
+                            Console.WriteLine("玩家{0}猜到了方块，安全", PlayerNames[0]);
+                            Console.ReadKey(true);
+                            break;
+                        case 1:
+                            Console.WriteLine("玩家{0}踩到了幸运轮盘，请选择 1--交换位置 2--轰炸对方", PlayerNames[0]);
+                            string input = Console.ReadLine();
+                            while (true)
+                            {
+                                if (input == "1")
+                                {
+                                    Console.WriteLine("玩家{0}选择跟玩家{1}交换位置", PlayerNames[0], PlayerNames[1]);
+                                    Console.ReadKey(true);
+                                    int temp = PlayerPos[0];
+                                    PlayerPos[0] = PlayerPos[1];
+                                    PlayerPos[1] = temp;
+                                    Console.WriteLine("交换完成！！！按任意键继续游戏！！！");
+                                    Console.ReadKey(true);
+                                    break;
+                                }
+                                else if (input == "2")
+                                {
+                                    Console.WriteLine("玩家{0}选择轰炸玩家{1}，玩家{2}退6格", PlayerNames[0], PlayerNames[1], PlayerNames[1]);
+                                    Console.ReadKey(true);
+                                    PlayerPos[1] -= 6;
+                                    Console.WriteLine("玩家{0}退了6格", PlayerNames[1]);
+                                    Console.ReadKey(true);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("只能输入1或者2  1--交换位置 2--轰炸对方");
+                                    input = Console.ReadLine();
+                                }
+                            }
+                            break;
+                        case 2:
+                            Console.WriteLine("玩家{0}踩到了地雷，退6格", PlayerNames[0]);
+                            PlayerPos[0] -= 6;
+                            Console.ReadKey(true);
+                            break;
+                        case 3:
+                            Console.WriteLine("玩家{0}踩到了暂停，暂停一回合", PlayerNames[0]);
+                            Console.ReadKey(true);
+                            break;
+                        case 4:
+                            Console.WriteLine("玩家{0}踩到了时空隧道，前进10格", PlayerNames[0]);
+                            PlayerPos[0] += 10;
+                            Console.ReadKey(true);
+                            break;
+                    }
+                }
+
+                Console.Clear();
+                DrawMap();
+            }
+
             Console.ReadKey();
         }
 
@@ -109,6 +195,7 @@ namespace FlyingChess
         /// </summary>
         public static void DrawMap()
         {
+            Console.WriteLine("图例：幸运轮盘:◎    地雷:☆    暂停:▲    时空隧道:卍");
             #region 第一横行
             for (int i = 0; i < 30; i++)
             {
@@ -151,6 +238,8 @@ namespace FlyingChess
                 Console.Write(DrawStringMap(i));
             }
             #endregion
+            //画完最后一行后，应该换行
+            Console.WriteLine();
         }
 
         /// <summary>
